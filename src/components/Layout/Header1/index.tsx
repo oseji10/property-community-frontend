@@ -69,10 +69,10 @@ const Header1: React.FC = () => {
         "
       >
         {/* Left: Contact info - hide on very small screens or compact */}
-        <div className="hidden sm:flex items-center gap-3 md:gap-6 text-xs md:text-sm font-medium ">
+        <div className="hidden lg:flex items-center gap-3 md:gap-6 text-xs md:text-sm font-medium ">
           <Link
             href="mailto:info@yourcompany.com"
-            className={`md:hidden flex items-center gap-1.5 ${textColor} ${hoverColor}`}
+            className={`flex items-center gap-1.5 ${textColor} ${hoverColor}`}
           >
             <Icon icon="solar:letter-bold" width={18} height={18} className="shrink-0" />
             info@yourcompany.com

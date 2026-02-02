@@ -87,7 +87,7 @@ const Hero: React.FC = () => {
               <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/10 to-black/60" />
 
               {/* Content container */}
-              <div className="relative container max-w-8xl mx-auto px-5 2xl:px-0 h-full flex items-left flex-col justify-between pb-24 md:pb-32 pt-40 md:pt-40 lg:pt-50  ">
+              <div className="relative container max-w-8xl mx-auto px-5 2xl:px-0 h-full flex items-left flex-col justify-between pb-24 md:pb-32 pt-40 md:pt-60 lg:pt-50  ">
                 {/* Top – Title & Location */}
                 <div className="text-white text-center md:text-left z-10 max-w-4xl">
                   <p className="text-xl md:text-2xl font-medium opacity-90">
