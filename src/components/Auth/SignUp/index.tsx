@@ -12,76 +12,83 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 interface Role {
   roleId: string | number;
   roleName: string;
-  // add other fields if your /roles returns more
+}
+
+interface FieldErrors {
+  fullName?: string[];
+  email?: string[];
+  phoneNumber?: string[];
+  role?: string[];
+  [key: string]: string[] | undefined;
 }
 
 const SignUp = ({ signUpOpen }: { signUpOpen?: (open: boolean) => void }) => {
   const router = useRouter();
+  const authDialog = useContext(AuthDialogContext);
+
   const [loading, setLoading] = useState(false);
   const [rolesLoading, setRolesLoading] = useState(true);
   const [roles, setRoles] = useState<Role[]>([]);
   const [selectedRole, setSelectedRole] = useState<string>("");
-  const authDialog = useContext(AuthDialogContext);
-  const [userEmail, setUserEmail] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
 
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
     phoneNumber: "",
-    role: ""
+    role: "",
   });
+
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
+  const [generalError, setGeneralError] = useState<string>("");
+  const [successMessage, setSuccessMessage] = useState<string>("");
 
   // Fetch roles
   useEffect(() => {
     setRolesLoading(true);
-
     api
-      .get("/roles") // ← no second argument needed for simple GET
+      .get("/roles")
       .then((res) => {
-        const data = res.data; // axios gives you .data
+        const data = res.data ?? [];
         const roleList = Array.isArray(data) ? data : [];
         setRoles(roleList);
 
         if (roleList.length > 0) {
-          setSelectedRole(roleList[0].id?.toString() || roleList[0].name || "");
+          setSelectedRole(roleList[0].roleId?.toString() || "");
+          setFormData((prev) => ({ ...prev, role: roleList[0].roleId?.toString() || "" }));
         }
       })
       .catch((err) => {
         console.error("Failed to load roles:", err);
         toast.error("Could not load signup types");
       })
-      .finally(() => {
-        setRolesLoading(false);
-      });
+      .finally(() => setRolesLoading(false));
   }, []);
 
-  // Submit handler
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+
+    // Clear error when user starts typing
+    if (fieldErrors[name]) {
+      setFieldErrors((prev) => ({ ...prev, [name]: undefined }));
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!formData.fullName.trim()) {
-      alert("Your name is required!");
-      // or set error state
+    setGeneralError("");
+    setFieldErrors({});
+    setSuccessMessage("");
+
+    if (!selectedRole) {
+      setGeneralError("Please select a signup type");
       return;
     }
 
-    if (!formData.email.trim()) {
-      alert("Email is required!");
-      // or set error state
-      return;
-    }
-
-    if (!formData.phoneNumber.trim()) {
-      alert("Phone number is required!");
-      // or set error state
-      return;
-    }
-
-    setIsLoading(true);
+    setLoading(true);
 
     const payload = {
       fullName: formData.fullName.trim(),
@@ -95,47 +102,55 @@ const SignUp = ({ signUpOpen }: { signUpOpen?: (open: boolean) => void }) => {
         `${process.env.NEXT_PUBLIC_API_URL}/auth/signup`,
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
           credentials: "include",
-        },
+        }
       );
 
-      const data = await response.json().catch(() => ({}));
+      let data;
+      try {
+        data = await response.json();
+      } catch {
+        data = {};
+      }
 
       if (response.ok) {
-        setUserEmail(formData.email);
-        if (response.ok) {
-          localStorage.setItem("pending_user_email", formData.email);
-          router.push("/auth/verify-email");
-        }
-        setSuccess("Sign up successful! Please verify your email.");
-        setFormData({
-          fullName: "",
-          email: "",
-          phoneNumber: "",
-          role: ""
-        });
+        setSuccessMessage("Sign up successful! Please verify your email.");
+        localStorage.setItem("pending_user_email", formData.email);
+        // Most apps redirect here — keeping both for flexibility
+        router.push("/auth/verify-email");
+        // You can remove the line below if you always want to redirect
+        // setFormData({ fullName: "", email: "", phoneNumber: "", role: "" });
       } else {
-        // alert(data.message || "Sign up failed. Please check your details.");
-        setError(data.message || "Sign up failed. Please check your details.");
+        // ── Handle different error shapes ──
+        if (data?.status === "error" && data?.errors && typeof data.errors === "object") {
+          // Laravel-like validation errors
+          setFieldErrors(data.errors as FieldErrors);
+
+          // Show first general message if no field errors are visible
+          if (Object.keys(data.errors).length === 0 && data.message) {
+            setGeneralError(data.message);
+          }
+        } else if (data?.message) {
+          setGeneralError(data.message);
+        } else {
+          setGeneralError("Sign up failed. Please try again.");
+        }
+
+        toast.error("Please correct the errors above");
       }
-    } catch (error) {
-      console.error("Error during sign up:", error);
-      alert("An error occurred. Please try again.");
+    } catch (err) {
+      console.error("Signup error:", err);
+      setGeneralError("Network error. Please check your connection.");
+      toast.error("Something went wrong");
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
+  const getFieldError = (field: keyof FieldErrors) =>
+    fieldErrors[field]?.[0] || undefined;
 
   return (
     <>
@@ -143,107 +158,115 @@ const SignUp = ({ signUpOpen }: { signUpOpen?: (open: boolean) => void }) => {
         <Logo />
       </div>
 
-      {error && (
-        <div className="mb-4 text-sm text-red-700 bg-red-50 border border-red-200 px-4 py-3 rounded-lg">
-          {error}
+      {generalError && (
+        <div className="mb-5 text-sm text-red-700 bg-red-50 border border-red-200 px-4 py-3 rounded-lg">
+          {generalError}
         </div>
       )}
 
-      {success && (
-        <div className="mb-4 text-sm text-emerald-700 bg-emerald-50 border border-emerald-200 px-4 py-3 rounded-lg">
-          {success}
+      {successMessage && (
+        <div className="mb-5 text-sm text-emerald-700 bg-emerald-50 border border-emerald-200 px-4 py-3 rounded-lg">
+          {successMessage}
         </div>
       )}
 
-      {/* <SocialSignUp /> */}
-      {/* <div className="relative my-8 text-center">… OR …</div> */}
       <h1 className="mb-6 text-center text-2xl font-semibold">Sign Up</h1>
-      <form onSubmit={handleSubmit}>
-        <div className="mb-[22px]">
-          {/* <input
-            type="text"
-            placeholder="Name"
-            name="name"
-            required
-            className="w-full rounded-md border border-black/10 dark:border-white/20 bg-transparent px-5 py-3 text-base text-dark outline-none transition placeholder:text-gray-300 focus:border-primary dark:text-white dark:focus:border-primary"
-          /> */}
-          <label>
-            Your Name<span className="text-error-500">*</span>
+
+      <form onSubmit={handleSubmit} noValidate>
+        {/* Full Name */}
+        <div className="mb-6">
+          <label className="mb-2 block text-base text-dark dark:text-white">
+            Your Name <span className="text-red-500">*</span>
           </label>
           <input
             type="text"
-            id="fullName"
             name="fullName"
             placeholder="Enter your full name"
             value={formData.fullName}
             onChange={handleChange}
             required
-            className="w-full rounded-md border border-black/10 dark:border-white/20 bg-transparent px-5 py-3 text-base text-dark outline-none transition placeholder:text-gray-300 focus:border-primary dark:text-white dark:focus:border-primary"
+            className={`w-full rounded-md border px-5 py-3 text-base outline-none transition ${
+              getFieldError("fullName")
+                ? "border-red-500 focus:border-red-500"
+                : "border-black/10 dark:border-white/20 focus:border-primary"
+            } bg-transparent dark:text-white placeholder:text-gray-300`}
           />
+          {getFieldError("fullName") && (
+            <p className="mt-1 text-sm text-red-600">{getFieldError("fullName")}</p>
+          )}
         </div>
 
-        <div className="mb-[22px]">
-          <label>
-            Email<span className="text-error-500">*</span>
+        {/* Email */}
+        <div className="mb-6">
+          <label className="mb-2 block text-base text-dark dark:text-white">
+            Email <span className="text-red-500">*</span>
           </label>
           <input
             type="email"
-            placeholder="Email"
+            name="email"
+            placeholder="yourname@example.com"
             value={formData.email}
             onChange={handleChange}
-            name="email"
             required
-            className="w-full rounded-md border border-black/10 dark:border-white/20 bg-transparent px-5 py-3 text-base text-dark outline-none transition placeholder:text-gray-300 focus:border-primary dark:text-white dark:focus:border-primary"
+            className={`w-full rounded-md border px-5 py-3 text-base outline-none transition ${
+              getFieldError("email")
+                ? "border-red-500 focus:border-red-500"
+                : "border-black/10 dark:border-white/20 focus:border-primary"
+            } bg-transparent dark:text-white placeholder:text-gray-300`}
           />
+          {getFieldError("email") && (
+            <p className="mt-1 text-sm text-red-600">{getFieldError("email")}</p>
+          )}
         </div>
 
-        <div className="mb-[22px]">
-          <label>
-            Phone Number<span className="text-error-500">*</span>
+        {/* Phone */}
+        <div className="mb-6">
+          <label className="mb-2 block text-base text-dark dark:text-white">
+            Phone Number <span className="text-red-500">*</span>
           </label>
           <input
-            type="tel" // ← semantically correct for phones
-            placeholder="Phone number"
+            type="tel"
             name="phoneNumber"
+            placeholder="+234 000 000 0000"
             value={formData.phoneNumber}
             onChange={handleChange}
             required
-            pattern="[0-9]{10,15}" // basic client-side validation (adjust length)
-            inputMode="numeric" // shows numeric keyboard on mobile
-            autoComplete="tel" // helps browser autofill
-            className="w-full rounded-md border border-black/10 dark:border-white/20 bg-transparent px-5 py-3 text-base text-dark outline-none transition placeholder:text-gray-300 focus:border-primary dark:text-white dark:focus:border-primary"
-            onKeyPress={(e) => {
-              // Allow only digits, +, -, (, ), space
-              const allowed = /[0-9+\-\s()]/;
-              if (!allowed.test(e.key)) {
-                e.preventDefault();
-              }
-            }}
-            // Optional: format as user types (very common for UX)
-            onInput={(e) => {
-              // Remove anything that's not digit / + / - / space / ( )
-              const value = e.currentTarget.value.replace(/[^0-9+\-\s()]/g, "");
-              e.currentTarget.value = value;
-            }}
+            pattern="[0-9+\-\s()]{8,15}"
+            inputMode="numeric"
+            autoComplete="tel"
+            className={`w-full rounded-md border px-5 py-3 text-base outline-none transition ${
+              getFieldError("phoneNumber")
+                ? "border-red-500 focus:border-red-500"
+                : "border-black/10 dark:border-white/20 focus:border-primary"
+            } bg-transparent dark:text-white placeholder:text-gray-300`}
           />
+          {getFieldError("phoneNumber") && (
+            <p className="mt-1 text-sm text-red-600">{getFieldError("phoneNumber")}</p>
+          )}
         </div>
-        {/* </div> */}
 
-        <div className="mb-[22px]">
+        {/* Role / Signup Type */}
+        <div className="mb-6">
           <label className="mb-2 block text-base text-dark dark:text-white">
-            Signup Type
+            Signup Type <span className="text-red-500">*</span>
           </label>
           {rolesLoading ? (
-            <div className="text-gray-500">Loading types...</div>
+            <div className="py-3 text-gray-500">Loading types...</div>
           ) : roles.length === 0 ? (
-            <div className="text-red-500">No signup types available</div>
+            <div className="py-3 text-red-600">No signup types available</div>
           ) : (
             <select
               value={selectedRole}
-              onChange={(e) => setSelectedRole(e.target.value)}
+              onChange={(e) => {
+                setSelectedRole(e.target.value);
+                setFormData((prev) => ({ ...prev, role: e.target.value }));
+              }}
               required
-              className="w-full rounded-md border border-black/10 dark:border-white/20 bg-transparent px-5 py-3 text-base text-dark outline-none transition focus:border-primary dark:text-white dark:focus:border-primary appearance-none"
-              style={{ backgroundColor: "transparent" }}
+              className={`w-full rounded-md border px-5 py-3 text-base outline-none transition appearance-none ${
+                getFieldError("role")
+                  ? "border-red-500 focus:border-red-500"
+                  : "border-black/10 dark:border-white/20 focus:border-primary"
+              } bg-transparent dark:text-white`}
             >
               <option value="" disabled>
                 Select signup type
@@ -255,34 +278,42 @@ const SignUp = ({ signUpOpen }: { signUpOpen?: (open: boolean) => void }) => {
               ))}
             </select>
           )}
+          {getFieldError("role") && (
+            <p className="mt-1 text-sm text-red-600">{getFieldError("role")}</p>
+          )}
         </div>
 
-        <div className="mb-9">
+        <div className="mb-8">
           <button
             type="submit"
-            disabled={isLoading || rolesLoading || !selectedRole}
-            className="flex w-full cursor-pointer items-center justify-center rounded-md bg-primary px-5 py-3 text-base text-white transition duration-300 ease-in-out hover:!bg-darkprimary disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={loading || rolesLoading || !selectedRole}
+            className="flex w-full items-center justify-center rounded-md bg-primary px-5 py-3 text-base font-medium text-white transition hover:bg-darkprimary disabled:opacity-60 disabled:cursor-not-allowed"
           >
-            { isLoading ? "Creating account..." : "Sign Up"}
-            {isLoading && <FontAwesomeIcon icon={faSpinner} className="mr-1 w-4 h-5 sm:w-4 sm:h-4 animate-spin" />}
+            {loading ? (
+              <>
+                Creating account...
+                <FontAwesomeIcon
+                  icon={faSpinner}
+                  className="ml-3 h-4 w-4 animate-spin"
+                />
+              </>
+            ) : (
+              "Sign Up"
+            )}
           </button>
         </div>
       </form>
 
-      <p className="text-center mb-4 text-base">
+      <p className="text-center text-base mb-4">
         By creating an account you agree with our{" "}
-        <Link href="/" className="text-primary hover:underline">
-          Privacy
-        </Link>{" "}
-        and{" "}
-        <Link href="/" className="text-primary hover:underline">
-          Policy
+        <Link href="/privacy" className="text-primary hover:underline">
+          Privacy Policy
         </Link>
       </p>
 
       <p className="text-center text-base">
         Already have an account?{" "}
-        <Link href="/auth/signin" className="pl-2 text-primary hover:underline">
+        <Link href="/auth/signin" className="text-primary hover:underline">
           Sign In
         </Link>
       </p>
