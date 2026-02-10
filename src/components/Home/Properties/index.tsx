@@ -40,7 +40,7 @@ const Properties: React.FC = () => {
 
         const response = await api.get('/properties')
 
-        const propertyList = response.data?.data ?? []
+        const propertyList = response.data?.data?.data ?? []
 
         if (!Array.isArray(propertyList)) {
           throw new Error('Expected "data" to be an array of properties')
@@ -129,7 +129,7 @@ const Properties: React.FC = () => {
                   // You could also call fetchProperties() again instead of reload
                   window.location.reload()
                 }}
-                className="mt-5 px-6 py-2.5 bg-primary text-white rounded-full hover:bg-primary/90 transition"
+                className="mt-5 px-6 py-2.5 bg-primary text-white rounded-full hover:bg-primary/90 transition hover:cursor-pointer"
               >
                 Try Again
               </button>

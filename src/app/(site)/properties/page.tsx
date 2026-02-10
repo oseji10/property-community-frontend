@@ -9,11 +9,12 @@ export const metadata: Metadata = {
 const page = () => {
     return (
         <>
-            <HeroSub
+            {/* <HeroSub
                 title="Discover inspiring designed homes."
                 description="Experience elegance and comfort with our exclusive luxury  villas, designed for sophisticated living."
                 badge="Properties"
-            />
+                
+            /> */}
             <PropertiesListing />
         </>
     );

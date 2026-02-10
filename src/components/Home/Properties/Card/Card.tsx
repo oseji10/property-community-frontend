@@ -7,7 +7,7 @@ import Link from 'next/link'
 const PropertyCard: React.FC<{ item: PropertyHomes }> = ({ item }) => {
   const { propertyTitle, location, price, bedrooms, bathrooms, currency, size, slug, images } = item
 
-  const mainImage = `${process.env.NEXT_PUBLIC_IMAGE_URL}${images[0].imageUrl}`
+  const mainImage = `${process.env.NEXT_PUBLIC_IMAGE_URL}${images[0]?.imageUrl}`
    const formatMoney = (value: number) =>
     new Intl.NumberFormat("en-NG", { minimumFractionDigits: 2 }).format(value);
 

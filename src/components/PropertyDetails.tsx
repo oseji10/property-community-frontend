@@ -148,6 +148,15 @@ export default function Details() {
   return (
     <section className="!pt-44 pb-20 relative">
       <div className="container mx-auto max-w-8xl px-5 2xl:px-0">
+         <div className="mb-6 mt-4">
+      <Link
+        href="/properties"
+        className="inline-flex items-center gap-2 text-primary font-medium hover:underline hover:cursor-pointer"
+      >
+        <Icon icon="akar-icons:arrow-left" width={20} height={20} />
+        Back to Properties
+      </Link>
+    </div>
         {/* Title + location + specs */}
         <div className="grid grid-cols-12 items-end gap-6">
           <div className="lg:col-span-8 col-span-12">
