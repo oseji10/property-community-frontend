@@ -4,7 +4,8 @@ const Logo: React.FC = () => {
   return (
     <>
       <Image
-        src={'/images/header/dark-propertycommunity.svg'}
+        src={'/images/header/dark-logo.png'}
+        // src={'/images/header/dark-propertyafrica.svg'}
         alt='logo'
         width={400}
         height={100}
@@ -12,12 +13,13 @@ const Logo: React.FC = () => {
         className='dark:hidden'
       />
       <Image
-        src={'/images/header/propertycommunity.svg'}
+        src={'/images/header/dark-logo.png'}
+        // src={'/images/header/dark-propertyafrica.svg'}
         alt='logo'
         width={400}
         height={100}
         unoptimized={true}
-        className='dark:block hidden'
+        className='dark:block hidden brightness-0 invert'
       />
     </>
   )

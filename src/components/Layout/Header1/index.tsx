@@ -55,7 +55,7 @@ const Header1: React.FC = () => {
       className="
         fixed top-0 left-0 right-0 z-50
         w-full
-        bg-[#FF8C00] dark:bg-dark shadow-lg
+        bg-[#D70040] dark:bg-dark shadow-lg
       "
     >
       <nav
@@ -71,11 +71,11 @@ const Header1: React.FC = () => {
         {/* Left: Contact info - hide on very small screens or compact */}
         <div className="hidden lg:flex items-center gap-3 md:gap-6 text-xs md:text-sm font-medium ">
           <Link
-            href="mailto:info@yourcompany.com"
+            href="mailto:info@propertyplusafrica.com"
             className={`flex items-center gap-1.5 ${textColor} ${hoverColor}`}
           >
             <Icon icon="solar:letter-bold" width={18} height={18} className="shrink-0" />
-            info@yourcompany.com
+            info@propertyplusafrica.com
           </Link>
 
           <Link
@@ -120,7 +120,7 @@ const Header1: React.FC = () => {
           {/* Action buttons - compact on mobile */}
 <div className="flex items-center gap-2 sm:gap-3 md:gap-4 pointer-events-auto">
             <Link
-              href="/buy-property"
+              href="/properties"
               className={`
                 flex items-center px-3 py-1.5 sm:px-4 sm:py-2 text-white dark:text-white 
                 hover:bg-black/20 dark:hover:bg-white/10 duration-300 text-xs sm:text-sm md:text-base 
@@ -133,7 +133,7 @@ const Header1: React.FC = () => {
             </Link>
 
             <Link
-              href="/sell-property"
+              href="/dashboard/add-new-property"
               className={`
                 flex items-center px-3 py-1.5 sm:px-4 sm:py-2 text-white dark:text-white 
                 hover:bg-black/20 dark:hover:bg-white/10 duration-300 text-xs sm:text-sm md:text-base 
@@ -146,7 +146,7 @@ const Header1: React.FC = () => {
             </Link>
 
             <Link
-              href="/list-property"
+              href="/properties"
               className={`
                 flex items-center px-3 py-1.5 sm:px-4 sm:py-2 text-white dark:text-white 
                 hover:bg-black/20 dark:hover:bg-white/10 duration-300 text-xs sm:text-sm md:text-base 
@@ -154,8 +154,8 @@ const Header1: React.FC = () => {
               `}
             >
               <FontAwesomeIcon icon={faArrowCircleRight} className="mr-1 w-3 h-3 sm:w-4 sm:h-4" />
-              <span className="hidden xs:inline">List</span>
-              <span className="xs:hidden">List</span>
+              <span className="hidden xs:inline">Rent</span>
+              <span className="xs:hidden">Rent</span>
             </Link>
           </div>
 

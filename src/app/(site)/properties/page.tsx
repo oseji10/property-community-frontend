@@ -3,7 +3,7 @@ import PropertiesListing from "@/components/Properties/PropertyList";
 import React from "react";
 import { Metadata } from "next";
 export const metadata: Metadata = {
-    title: "Property List | Property Community",
+    title: "Property List | Property Plus Africa",
 };
 
 const page = () => {

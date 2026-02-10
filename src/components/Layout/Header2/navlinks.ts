@@ -6,20 +6,35 @@ export const navLinks: NavItem[] = [
   },
   {
     title: 'Properties',
-    path: '/properties',
+    path: '#',
     submenu: [
-      { title: 'Buy', path: '/buy' },
-      { title: 'Rent', path: '/rent' },
-      { title: 'New Developments', path: '/new-developments' },
+      { title: 'Buy', path: '/properties' },
+      { title: 'Sell', path: '/dashboard/add-new-property' },
+      { title: 'Rent', path: '/properties' },
+      // { title: 'New Developments', path: '/new-developments' },
     ],
   },
   {
-    title: 'About',
-    path: '/about',
+    title: 'Workforce',
+    path: '/workforce',
+  },
+  {
+    title: 'Services',
+    path: '#',
+    submenu: [
+      { title: 'Property Management', path: '/property-management' },
+      { title: 'Legal Services', path: '/legal-services' },
+      { title: 'Title Documentation', path: '/title-documentation' },
+      { title: 'Consultation', path: '/consultation' },
+      { title: 'Contract Services', path: '/contract-services' },
+      { title: 'Property Development', path: '/property-development' },
+      { title: 'Engineering Services', path: '/engineering-services' },
+      { title: 'Architectural Services', path: '/architectural-services' },
+    ],
   },
   {
     title: 'Contact',
-    path: '/contact',
+    path: '/contactus',
   },
   // ... etc.
 ];

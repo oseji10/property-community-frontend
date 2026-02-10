@@ -3,7 +3,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { Metadata } from "next";
 export const metadata: Metadata = {
-    title: "Contact Us | Property Community",
+    title: "Contact Us | Property Plus Africa",
 };
 
 export default function ContactUs() {
@@ -59,7 +59,7 @@ export default function ContactUs() {
                 <div className='flex items-center gap-4 group w-fit'>
                   <Icon icon={'ph:phone'} width={32} height={32} />
                   <p className='text-sm xs:text-base mobile:text-xm font-normal group-hover:text-primary'>
-                    +1 0239 0310 1122
+                    +1-212-456-789
                   </p>
                 </div>
               </Link>
@@ -67,7 +67,7 @@ export default function ContactUs() {
                 <div className='flex items-center gap-4 group w-fit'>
                   <Icon icon={'ph:envelope-simple'} width={32} height={32} />
                   <p className='text-sm xs:text-base mobile:text-xm font-normal group-hover:text-primary'>
-                    support@gleamer.com
+                    support@propertyplusafrica.com
                   </p>
                 </div>
               </Link>

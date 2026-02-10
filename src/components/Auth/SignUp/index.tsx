@@ -6,6 +6,8 @@ import { useContext, useEffect, useState } from "react";
 import AuthDialogContext from "@/app/context/AuthDialogContext";
 import Logo from "@/components/Layout/Header2/BrandLogo/Logo";
 import api from "@/app/lib/api";
+import { faSpinner } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 interface Role {
   roleId: string | number;
@@ -262,6 +264,7 @@ const SignUp = ({ signUpOpen }: { signUpOpen?: (open: boolean) => void }) => {
             className="flex w-full cursor-pointer items-center justify-center rounded-md bg-primary px-5 py-3 text-base text-white transition duration-300 ease-in-out hover:!bg-darkprimary disabled:opacity-50 disabled:cursor-not-allowed"
           >
             { isLoading ? "Creating account..." : "Sign Up"}
+            {isLoading && <FontAwesomeIcon icon={faSpinner} className="mr-1 w-4 h-5 sm:w-4 sm:h-4 animate-spin" />}
           </button>
         </div>
       </form>

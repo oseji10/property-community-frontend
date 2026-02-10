@@ -65,7 +65,7 @@ export const Introduction = () => {
           }
         </div>
         <div className="mt-5">
-          <p className="text-base font-medium text-midnight_text dark:text-white dark:text-opacity-50">Property Community Tailwind NextJs Template is built with Tailwindcss and Nextjs.</p>
+          <p className="text-base font-medium text-midnight_text dark:text-white dark:text-opacity-50">Property Plus Africa Tailwind NextJs Template is built with Tailwindcss and Nextjs.</p>
           <p className="text-base font-medium text-midnight_text dark:text-white dark:text-opacity-50">These theme is ready to use and you can totally customize as per your requirement.</p>
           <p className="text-base font-medium text-midnight_text dark:text-white dark:text-opacity-50">For Customize, You should have knowledge of NextJs, ReactJs, Tailwind and JSX to be able to modify these template.</p>
         </div>

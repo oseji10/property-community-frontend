@@ -2,7 +2,7 @@
 import { Documentation } from "@/components/Documentation/Documentation";
 import { Metadata } from "next";
 export const metadata: Metadata = {
-    title: "Featurs | Property Community",
+    title: "Featurs | Property Plus Africa",
 };
 
 export default function Page() {

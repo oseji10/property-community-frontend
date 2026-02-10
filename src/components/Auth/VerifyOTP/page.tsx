@@ -26,7 +26,7 @@ export default function VerifyOTP() {
   useEffect(() => {
     const storedEmail = localStorage.getItem("pending_user_email");
     if (!storedEmail) {
-      router.push("/signin");
+      router.push("/auth/signin");
       return;
     }
     setEmail(storedEmail);
@@ -209,7 +209,7 @@ export default function VerifyOTP() {
             type="button"
             disabled={loading || otp.join("").length !== 6}
             onClick={verifyOtp}
-            className="w-full py-3 px-4 bg-primary text-white rounded-md font-medium hover:bg-darkprimary transition disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full py-3 px-4 bg-primary text-white rounded-md font-medium hover:bg-darkprimary transition disabled:opacity-50 hover:cursor-pointer"
           >
             {loading ? "Verifying..." : "Verify OTP"}
           </button>
@@ -224,7 +224,7 @@ export default function VerifyOTP() {
             <button
               onClick={handleResend}
               disabled={resendLoading}
-              className="text-primary hover:underline font-medium disabled:opacity-50"
+              className="text-primary hover:underline font-medium disabled:opacity-50 hover:cursor-pointer"
             >
               {resendLoading ? "Sending..." : "Resend OTP"}
             </button>

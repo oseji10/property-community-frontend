@@ -7,7 +7,7 @@ import Logo from "@/components/Layout/Header2/BrandLogo/Logo";
 import api from "@/app/lib/api";
 import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEye } from "@fortawesome/free-solid-svg-icons";
+import { faEye, faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 
 export default function SetupPassword() {
@@ -290,9 +290,10 @@ export default function SetupPassword() {
           <button
             type="submit"
             disabled={isLoading || formData.password !== formData.confirmPassword}
-            className="w-full py-3 px-4 bg-primary text-white rounded-md font-medium hover:bg-darkprimary transition duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full py-3 px-4 bg-primary text-white rounded-md font-medium hover:bg-darkprimary transition duration-300 disabled:opacity-50 hover:cursor-pointer"
           >
             {isLoading ? "Setting password..." : "Set Password & Continue"}
+            {isLoading && <FontAwesomeIcon icon={faSpinner} className="mr-1 w-4 h-5 sm:w-4 sm:h-4 animate-spin" />}
           </button>
         </form>
 

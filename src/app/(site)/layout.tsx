@@ -12,7 +12,7 @@ import Header2 from '@/components/Layout/Header2'
 const font = Bricolage_Grotesque({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'Property Community',
+  title: 'Property+ Africa | For everyone',
   description: 'A real estate platform connecting buyers, sellers, and agents.',
 }
 

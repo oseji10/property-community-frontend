@@ -1,16 +1,26 @@
+"use client";
 import { Icon } from '@iconify/react';
 import StatCard from './StatCard';
+import { getUserName } from '@/app/lib/auth';
 
 interface WelcomeHeaderProps {
   userName: string;
 }
 
 export default function WelcomeHeader({ userName }: WelcomeHeaderProps) {
+// const user = localStorage.getItem('user');
+// const userData = user ? JSON.parse(user) : null;
+// const fullName = userData?.firstName || userData?.name || 'User';
+
+const fullName = getUserName() || 'User';
+  const [firstNamePart, lastNamePart] = fullName.split(' ');
+  const firstNameFinal = firstNamePart;
+  // const lastNameFinal = lastNamePart;
   return (
     <>
     
     <h1 className="text-3xl md:text-4xl font-bold tracking-tight">
-      Welcome back, {userName}!
+      Welcome back, {firstNameFinal}!
     </h1>
 
     <p className="text-gray-600 dark:text-gray-400 mb-6">

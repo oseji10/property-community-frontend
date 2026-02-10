@@ -4,7 +4,7 @@ import { Metadata } from "next";
 
 export const metadata: Metadata = {
     title:
-        "Blog Grids | Property Community ",
+        "Blog Grids | Property Plus Africa ",
 };
 
 const Blog = () => {

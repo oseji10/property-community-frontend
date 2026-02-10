@@ -55,7 +55,7 @@ export default function SearchOverlay() {
             {/* Search button – fills the last grid cell naturally */}
             <button
               type="submit"
-              className="w-full bg-[#FF8C00] hover:bg-[#e67e00] text-white font-semibold py-3.5 rounded-xl shadow-md transition-all duration-300 flex items-center justify-center gap-2"
+              className="w-full bg-[#D70040] hover:bg-[#e67e00] text-white font-semibold py-3.5 rounded-xl shadow-md transition-all duration-300 flex items-center justify-center gap-2"
             >
               Search {searchType === 'buy' ? 'Homes' : searchType === 'rent' ? 'Rentals' : 'Sold Properties'}
             </button>

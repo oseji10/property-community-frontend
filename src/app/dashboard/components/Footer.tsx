@@ -10,7 +10,7 @@ const Footer = () => {
      
         <div className="flex justify-between md:flex-nowrap flex-wrap items-center py-4 gap-6">
           <p className="text-dark dark:text-white text-sm text-center md:text-center justify-center w-full">
-            ©2026 Property Community - Site Developed by <Link href="https://resilience.ng/" className="hover:text-primary" target="_blank">Resilience Nigeria</Link>
+            ©2026 Property Plus Africa
           </p>
           
         </div>
