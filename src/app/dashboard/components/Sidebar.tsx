@@ -140,7 +140,7 @@ export default function Sidebar({ isMobileOpen, onClose }: SidebarProps) {
       <div className="p-6 border-b border-gray-200 dark:border-gray-800">
         <Link href="/dashboard" className="flex-shrink-0 block" onClick={onClose}>
           <Image
-            src="/images/header/dark-propertyafrica.svg"
+            src="/images/header/dark-logo.png"
             alt="logo"
             width={400}
             height={100}
@@ -148,7 +148,7 @@ export default function Sidebar({ isMobileOpen, onClose }: SidebarProps) {
             className="block dark:hidden w-full max-w-[220px]"
           />
           <Image
-            src="/images/header/propertyafrica.svg"
+            src="/images/header/logo.png"
             alt="logo"
             width={400}
             height={100}

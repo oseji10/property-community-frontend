@@ -25,6 +25,8 @@ interface User {
 }
 
 const Header2: React.FC = () => {
+  const [openSubmenu, setOpenSubmenu] = useState<number | null>(null)
+
   const [sticky, setSticky] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
   const [user, setUser] = useState<User | null>(null)
@@ -73,15 +75,35 @@ const Header2: React.FC = () => {
   }, [handleScroll])
 
   /* ---------------- Click Outside Mobile Menu ---------------- */
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (mobileMenuRef.current && !mobileMenuRef.current.contains(e.target as Node)) {
-        setMobileOpen(false)
-      }
+useEffect(() => {
+  const handleClickOutside = (event: PointerEvent) => {
+    if (!mobileOpen) return
+
+    if (
+      mobileMenuRef.current &&
+      !mobileMenuRef.current.contains(event.target as Node)
+    ) {
+      setMobileOpen(false)
     }
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [])
+  }
+
+  document.addEventListener('pointerdown', handleClickOutside)
+  return () => {
+    document.removeEventListener('pointerdown', handleClickOutside)
+  }
+}, [mobileOpen])
+
+
+useEffect(() => {
+  if (mobileOpen) {
+    document.body.style.position = 'fixed'
+    document.body.style.width = '100%'
+  } else {
+    document.body.style.position = ''
+    document.body.style.width = ''
+  }
+}, [mobileOpen])
+
 
   return (
    <header
@@ -151,7 +173,7 @@ const Header2: React.FC = () => {
                   {item.submenu && (
                     <Icon
                       icon="solar:alt-arrow-down-bold"
-                      className="inline ml-1 text-sm opacity-70"
+                      className="inline ml-1 text-sm opacity-70 "
                     />
                   )}
                 </Link>
@@ -165,7 +187,7 @@ const Header2: React.FC = () => {
                       rounded-xl shadow-xl
                       ${sticky || !isHomepage
                         ? 'bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800'
-                        : 'bg-black/80 backdrop-blur-md border border-white/20'
+                        : 'bg-white backdrop-blur-md border border-white/20'
                       }
                     `}
                   >
@@ -192,7 +214,12 @@ const Header2: React.FC = () => {
                 <div className="h-9 w-24 bg-gray-200 rounded-full animate-pulse" />
               ) : isLoggedIn ? (
                 <>
-                  <span className="text-sm font-medium">
+                  <span className={`text-sm font-medium 
+                   ${sticky || !isHomepage
+                        ? 'text-dark dark:text-gray-900 '
+                        : 'text-white '
+                      }`}
+                  >
                     Hi, {displayName}
                   </span>
                   <Link
@@ -223,9 +250,10 @@ const Header2: React.FC = () => {
 
           {/* ================= HAMBURGER (Mobile + Tablet) ================= */}
           <button
-            onClick={() => setMobileOpen(!mobileOpen)}
-            className="xl:hidden p-2 z-50"
-          >
+  onClick={() => setMobileOpen(prev => !prev)}
+  className="xl:hidden p-2 z-50"
+>
+
             <Icon
               icon={mobileOpen ? 'solar:close-square-bold' : 'solar:hamburger-menu-bold'}
               className={`text-3xl ${
@@ -237,39 +265,98 @@ const Header2: React.FC = () => {
       </nav>
 
       {/* ================= OVERLAY ================= */}
-      <div
+      {/* <div
         className={`fixed inset-0 bg-black/60 backdrop-blur-sm z-40 xl:hidden
           ${mobileOpen ? 'opacity-100 visible' : 'opacity-0 invisible'}
         `}
         onClick={() => setMobileOpen(false)}
-      />
+      /> */}
+<div
+  className={`
+    fixed inset-0 z-40 bg-black/60 backdrop-blur-sm xl:hidden
+    transition-opacity
+    ${mobileOpen ? 'opacity-100 visible pointer-events-auto' : 'opacity-0 invisible pointer-events-none'}
+  `}
+  onClick={() => setMobileOpen(false)}
+/>
+
+
 
       {/* ================= MOBILE / TABLET SIDEBAR ================= */}
-      <div
-        ref={mobileMenuRef}
-        className={`
-          fixed top-0 right-0 h-full
-          w-full max-w-[360px] md:max-w-[420px]
-          bg-white dark:bg-gray-950
-          shadow-2xl
-          transform transition-transform duration-300
-          z-50 xl:hidden
-          ${mobileOpen ? 'translate-x-0' : 'translate-x-full'}
-        `}
-      >
+<div
+  ref={mobileMenuRef}
+  className={`
+    fixed top-0
+    h-full
+    w-full max-w-[360px] md:max-w-[420px]
+    bg-white dark:bg-gray-950
+    shadow-2xl
+    z-50 xl:hidden
+    transition-[right] duration-300 ease-out
+    ${mobileOpen ? 'right-0' : '-right-full'}
+  `}
+>
+
+
         <div className="flex flex-col h-full overflow-y-auto p-4">
-          <nav className="space-y-2">
-            {navLinks.map((item, i) => (
+          <nav className="space-y-1">
+  {navLinks.map((item, i) => {
+    const hasSubmenu = !!item.submenu
+    const isOpen = openSubmenu === i
+
+    return (
+      <div key={i} className="rounded-lg">
+        {/* Top-level item */}
+        <div
+          className="flex items-center justify-between px-4 py-3 rounded-lg font-medium hover:bg-gray-100 dark:hover:bg-gray-800 cursor-pointer"
+          onClick={() => {
+            if (hasSubmenu) {
+              setOpenSubmenu(isOpen ? null : i)
+            } else {
+              setMobileOpen(false)
+            }
+          }}
+        >
+          <Link
+            href={item.path}
+            className="flex-1"
+            onClick={(e) => {
+              if (hasSubmenu) e.preventDefault()
+            }}
+          >
+            {item.title}
+          </Link>
+
+          {/* Dropdown icon — MOBILE ONLY */}
+          {hasSubmenu && (
+            <Icon
+              icon="solar:alt-arrow-down-bold"
+              className={`ml-2 text-lg transition-transform ${
+                isOpen ? 'rotate-180' : ''
+              }`}
+            />
+          )}
+        </div>
+
+        {/* Submenu */}
+        {hasSubmenu && isOpen && (
+          <div className="ml-4 mt-1 space-y-1 border-l border-gray-200 dark:border-gray-800">
+            {item.submenu!.map((sub, j) => (
               <Link
-                key={i}
-                href={item.path}
+                key={j}
+                href={sub.path}
                 onClick={() => setMobileOpen(false)}
-                className="block px-4 py-3 rounded-lg font-medium hover:bg-gray-100 dark:hover:bg-gray-800"
+                className="block px-4 py-2 text-sm text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md"
               >
-                {item.title}
+                {sub.title}
               </Link>
             ))}
-          </nav>
+          </div>
+        )}
+      </div>
+    )
+  })}
+</nav>
 
           <div className="mt-auto pt-6 space-y-3">
             {isLoggedIn ? (
@@ -299,10 +386,10 @@ const Header2: React.FC = () => {
             <div className="mt-6 text-sm text-gray-500 dark:text-gray-400">
               <p className="font-medium mb-1">Contact us:</p>
               <a 
-                href="mailto:hello@propertycommunity.com" 
+                href="mailto:info@propertyplusafrica.com" 
                 className="text-primary hover:underline break-words"
               >
-                hello@propertycommunity.com
+                info@propertyplusafrica.com
               </a>
             </div>
           </div>

@@ -191,7 +191,7 @@ const Header1: React.FC = () => {
               className="block text-sm hover:cursor-pointer hover:text-blue-600"
               onClick={() => setNavbarOpen(false)}
             >
-              info@yourcompany.com
+              info@propertyplusafrica.com
             </Link>
             <Link 
               href="tel:+1212456789" 
