@@ -8,6 +8,7 @@ import Logo from "@/components/Layout/Header2/BrandLogo/Logo";
 import api from "@/app/lib/api";
 import { faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Icon } from "@iconify/react";
 
 interface Role {
   roleId: string | number;
@@ -154,6 +155,13 @@ const SignUp = ({ signUpOpen }: { signUpOpen?: (open: boolean) => void }) => {
 
   return (
     <>
+    <Link
+        href="/"
+        className="inline-flex items-center gap-2 text-primary font-medium hover:underline hover:cursor-pointer"
+      >
+        <Icon icon="akar-icons:arrow-left" width={20} height={20} />
+        Back to Homepage
+      </Link>
       <div className="mb-10 text-center mx-auto inline-block">
         <Logo />
       </div>

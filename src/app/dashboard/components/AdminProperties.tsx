@@ -18,7 +18,7 @@ import api from '@/app/lib/api';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'My Properties | Property Community',
+  title: 'My Properties | Property Plus Africa',
 };
 
 interface Currency {

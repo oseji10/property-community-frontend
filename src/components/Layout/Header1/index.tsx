@@ -72,15 +72,15 @@ const Header1: React.FC = () => {
         <div className="hidden lg:flex items-center gap-3 md:gap-6 text-xs md:text-sm font-medium ">
           <Link
             href="mailto:info@propertyplusafrica.com"
-            className={`flex items-center gap-1.5 ${textColor} ${hoverColor}`}
+            className={`flex items-center gap-1.5 ${textColor} ${hoverColor} text-white`}
           >
-            <Icon icon="solar:letter-bold" width={18} height={18} className="shrink-0" />
+            <Icon icon="solar:letter-bold" width={18} height={18} className="shrink-0 " />
             info@propertyplusafrica.com
           </Link>
 
           <Link
             href="tel:+1212456789"
-            className={`flex items-center gap-1.5 ${textColor} ${hoverColor}`}
+            className={`flex items-center gap-1.5 ${textColor} ${hoverColor} text-white`}
           >
             <Icon icon="ph:phone-bold" width={18} height={18} className="shrink-0" />
             +1-212-456-789
@@ -90,12 +90,12 @@ const Header1: React.FC = () => {
         {/* Right side controls */}
         <div className="flex items-center gap-3 sm:gap-4 md:gap-6">
           {/* Social icons - show on md+, compact on sm */}
-          <div className="hidden sm:flex items-center gap-2 md:gap-4">
+          <div className="hidden sm:flex items-center gap-2 md:gap-4 font-bold">
             <a
               href="https://x.com/yourprofile"
               target="_blank"
               rel="noopener noreferrer"
-              className={`${textColor} ${hoverColor} hover:cursor-pointer`}
+              className={`${textColor} ${hoverColor} hover:cursor-pointer text-white`}
             >
               <Icon icon="ri:twitter-x-fill" width={20} height={20} />
             </a>
@@ -103,7 +103,7 @@ const Header1: React.FC = () => {
               href="https://facebook.com/yourpage"
               target="_blank"
               rel="noopener noreferrer"
-              className={`${textColor} ${hoverColor} hover:cursor-pointer`}
+              className={`${textColor} ${hoverColor} hover:cursor-pointer text-white`}
             >
               <Icon icon="ri:facebook-fill" width={20} height={20} />
             </a>
@@ -111,16 +111,34 @@ const Header1: React.FC = () => {
               href="https://instagram.com/yourprofile"
               target="_blank"
               rel="noopener noreferrer"
-              className={`${textColor} ${hoverColor} hover:cursor-pointer`}
+              className={`${textColor} ${hoverColor} hover:cursor-pointer text-white`}
             >
               <Icon icon="ri:instagram-fill" width={20} height={20} />
+            </a>
+
+             <a
+              href="https://linkedin.com/yourprofile"
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`${textColor} ${hoverColor} hover:cursor-pointer text-white`}
+            >
+              <Icon icon="ri:linkedin-fill" width={20} height={20} />
+            </a>
+
+             <a
+              href="https://youtube.com/yourprofile"
+              target="_blank"
+              rel="noopener noreferrer"
+              className={`${textColor} ${hoverColor} hover:cursor-pointer text-white`}
+            >
+              <Icon icon="ri:youtube-fill" width={20} height={20} />
             </a>
           </div>
 
           {/* Action buttons - compact on mobile */}
 <div className="flex items-center gap-2 sm:gap-3 md:gap-4 pointer-events-auto">
             <Link
-              href="/properties"
+              href="/properties?type=buy"
               className={`
                 flex items-center px-3 py-1.5 sm:px-4 sm:py-2 text-white dark:text-white 
                 hover:bg-black/20 dark:hover:bg-white/10 duration-300 text-xs sm:text-sm md:text-base 
@@ -146,7 +164,7 @@ const Header1: React.FC = () => {
             </Link>
 
             <Link
-              href="/properties"
+              href="/properties?type=rent"
               className={`
                 flex items-center px-3 py-1.5 sm:px-4 sm:py-2 text-white dark:text-white 
                 hover:bg-black/20 dark:hover:bg-white/10 duration-300 text-xs sm:text-sm md:text-base 
@@ -162,12 +180,12 @@ const Header1: React.FC = () => {
           {/* Theme toggle */}
           <button
             onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-            className="hover:cursor-pointer flex-shrink-0"
+            className="hover:cursor-pointer flex-shrink-0 text-white"
           >
             <Icon
               icon="solar:sun-bold"
               width={24} height={24}
-              className={`dark:hidden block ${textColor}`}
+              className={`dark:hidden block ${textColor} text-white`}
             />
             <Icon
               icon="solar:moon-bold"
@@ -182,13 +200,13 @@ const Header1: React.FC = () => {
       {navbarOpen && (
         <div 
           ref={sideMenuRef}
-          className="fixed top-[48px] right-4 w-48 bg-white dark:bg-dark shadow-xl rounded-xl p-4 z-40 md:hidden"
+          className="fixed top-[48px] right-4 w-48 bg-white dark:bg-dark shadow-xl rounded-xl p-4 z-40 md:hidden text-white"
         >
           {/* Add mobile-specific items if needed, e.g. contact/social */}
           <div className="space-y-3">
             <Link 
               href="mailto:info@yourcompany.com" 
-              className="block text-sm hover:cursor-pointer hover:text-blue-600"
+              className="block text-sm hover:cursor-pointer hover:text-blue-600 !text-white"
               onClick={() => setNavbarOpen(false)}
             >
               info@propertyplusafrica.com

@@ -9,6 +9,7 @@ import AuthDialogContext from "@/app/context/AuthDialogContext";
 import Logo from "@/components/Layout/Header2/BrandLogo/Logo";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowCircleRight, faSpinner } from '@fortawesome/free-solid-svg-icons';
+import { Icon } from "@iconify/react";
 
 const Signin = ({ signInOpen }: { signInOpen?: any }) => {
   const { data: session } = useSession();
@@ -101,6 +102,13 @@ const Signin = ({ signInOpen }: { signInOpen?: any }) => {
 
   return (
     <>
+        <Link
+        href="/"
+        className="inline-flex items-center gap-2 text-primary font-medium hover:underline hover:cursor-pointer"
+      >
+        <Icon icon="akar-icons:arrow-left" width={20} height={20} />
+        Back to Homepage
+      </Link>
       <div className="mb-2 text-center flex justify-center">
         <Logo />
       </div>

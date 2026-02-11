@@ -4,20 +4,20 @@ export const navLinks: NavItem[] = [
     title: 'Home',
     path: '/',                    // ← must be string
   },
-  {
-    title: 'Properties',
-    path: '#',
-    submenu: [
-      { title: 'Buy', path: '/properties' },
-      { title: 'Sell', path: '/dashboard/add-new-property' },
-      { title: 'Rent', path: '/properties' },
-      // { title: 'New Developments', path: '/new-developments' },
-    ],
-  },
-  {
-    title: 'Workforce',
-    path: '/workforce',
-  },
+  // {
+  //   title: 'Properties',
+  //   path: '#',
+  //   submenu: [
+  //     { title: 'Buy', path: '/properties?type=buy' },
+  //     { title: 'Sell', path: '/dashboard/add-new-property' },
+  //     { title: 'Rent', path: '/properties?type=rent' },
+  //     // { title: 'New Developments', path: '/new-developments' },
+  //   ],
+  // },
+  // {
+  //   title: 'Workforce',
+  //   path: '/workforce',
+  // },
   {
     title: 'Services',
     path: '#',

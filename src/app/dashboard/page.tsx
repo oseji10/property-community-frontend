@@ -37,9 +37,7 @@ export default async function UserDashboard() {
               <FavoritePropertiesSection />
             {/* <UpcomingViewingsSection /> */}
             </div>
-
-            {/* Your original form + image card */}
-            
+ 
           </div>
         </main>
         <Footer/>

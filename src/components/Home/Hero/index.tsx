@@ -1,6 +1,6 @@
 'use client'; // ← important if using Next.js App Router + interactive components
 
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -93,7 +93,7 @@ const Hero: React.FC = () => {
                   <p className="text-xl md:text-2xl font-medium opacity-90">
                     {prop.location}
                   </p>
-                  <h1 className="text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-semibold tracking-tighter mt-3 md:mt-5 leading-tight">
+                  <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-semibold tracking-tighter mt-3 md:mt-5 leading-tight">
                     {prop.title}
                   </h1>
                 </div>
@@ -143,7 +143,13 @@ const Hero: React.FC = () => {
       </Swiper>
 
       {/* ── Search Overlay ─────────────────────────────────────── */}
+      {/* <SearchOverlay /> */}
+      <Suspense fallback={
+      <div className="absolute inset-x-0 top-[min(18vh,160px)] lg:top-[min(40vh,400px)] h-64 bg-white/50 dark:bg-zinc-900/50 backdrop-blur animate-pulse rounded-2xl mx-auto max-w-[1500px]" />
+      // or simpler: <div className="h-80" /> or a real skeleton
+    }>
       <SearchOverlay />
+    </Suspense>
     </section>
   );
 };

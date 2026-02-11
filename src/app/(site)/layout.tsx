@@ -10,6 +10,7 @@ import { ThemeProvider } from 'next-themes'
 import NextTopLoader from 'nextjs-toploader'
 import SessionProviderComp from '@/components/nextauth/SessionProvider'
 import { PropertyTypesProvider } from '../../components/PropertyTypesContext'
+import { Toaster } from 'react-hot-toast'
 
 const font = Bricolage_Grotesque({ subsets: ['latin'] })
 
@@ -40,6 +41,7 @@ export default function RootLayout({
 <PropertyTypesProvider>
               <Header1 />
               <Header2 />
+              <Toaster position="top-right" />
               {children}
               <Footer />
 </PropertyTypesProvider>

@@ -91,7 +91,7 @@ export default function SearchOverlay() {
                 <button
                   key={type}
                   onClick={() => setSearchType(type)}
-                  className={`px-6 py-2.5 rounded-full text-sm font-medium transition
+                  className={`px-6 py-2.5 rounded-full text-sm font-medium transition hover:cursor-pointer
                     ${
                       searchType === type
                         ? 'bg-white dark:bg-zinc-700 shadow text-zinc-900 dark:text-white'
@@ -173,7 +173,7 @@ export default function SearchOverlay() {
 
             {/* Submit */}
 <div>
-  <label className="block mb-1 text-sm font-medium opacity-0 select-none">
+  <label className="block mb-1 text-sm font-medium opacity-0 select-none ">
     Search
   </label>
 
@@ -186,6 +186,7 @@ export default function SearchOverlay() {
       rounded-xl
       py-3.5
       hover:opacity-90 transition
+      hover:cursor-pointer
     "
   >
     Search
