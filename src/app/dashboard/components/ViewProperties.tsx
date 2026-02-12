@@ -1,18 +1,21 @@
 // app/dashboard/properties/[propertyId]/page.tsx
 'use client';
 
-import { useState, useEffect, use } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { Icon } from '@iconify/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSpinner, faBed, faShower, faCar, faMapMarkerAlt, faDollarSign } from '@fortawesome/free-solid-svg-icons';
+import {
+  faSpinner,
+  faBed,
+  faShower,
+  faCar,
+  faMapMarkerAlt,
+  faEye,
+  faHeart,
+} from '@fortawesome/free-solid-svg-icons';
 import api from '@/app/lib/api';
-import { Metadata } from 'next';
 import toast from 'react-hot-toast';
-
-// export const metadata: Metadata = {
-//   title: 'Property Details | Property Plus Africa',
-// };
 
 interface PropertyImage {
   imageId: number;
@@ -20,48 +23,76 @@ interface PropertyImage {
 }
 
 interface PropertyType {
+  typeId: number;
   typeName: string;
 }
 
 interface Currency {
+  currencyId: number;
   currencySymbol: string;
+  currencyCode: string;
 }
 
-interface Property {
-  propertyId: number | string;
+interface Owner {
+  id: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phoneNumber: string;
+}
+
+interface PropertyData {
+  propertyId: number;
   propertyTitle: string;
-  listingType: 'sale' | 'rent';
-  price: number;
-  currency: Currency;
+  propertyDescription: string;
+  address: string;
+  city: string;
+  state: string;
+  latitude?: string;
+  longitude?: string;
   bedrooms?: number;
   bathrooms?: number;
   garage?: string;
-  state: string;
-  city: string;
-  address: string;
-  latitude?: string;
-  longitude?: string;
-  propertyType: PropertyType;
+  size?: string;
+  price: string;               // comes as string from backend
+  listingType: 'sale' | 'rent';
+  status: string;              // e.g. "available", "sold", "rented"
   amenities?: string;
   otherFeatures?: string;
-  propertyDescription: string;
-  images?: PropertyImage[];
-  status?: string;
+  images: PropertyImage[];
+  currency: Currency;
+  property_type: PropertyType; // note: snake_case from backend
+  owner?: Owner;
+  created_at: string;
+  updated_at: string;
+}
+
+interface PropertyResponse {
+  property: PropertyData;
+  viewsCount: number;
+  favoritesCount: number;
+  isOwner: boolean;
 }
 
 export default function PropertyDetails() {
   const { propertyId } = useParams();
   const slug = useSearchParams().get('slug');
   const router = useRouter();
-  const [property, setProperty] = useState<Property | null>(null);
+
+  const [data, setData] = useState<PropertyResponse | null>(null);
   const [loading, setLoading] = useState(true);
+  const [updatingStatus, setUpdatingStatus] = useState(false);
+  const [selectedStatus, setSelectedStatus] = useState<string>('available');
 
   useEffect(() => {
     const fetchProperty = async () => {
       try {
         setLoading(true);
         const res = await api.get(`/properties/${slug}`);
-        setProperty(res.data);
+        const responseData: PropertyResponse = res.data;
+
+        setData(responseData);
+        setSelectedStatus(responseData.property.status?.toLowerCase() || 'available');
       } catch (err: any) {
         toast.error(err?.response?.data?.message || 'Failed to load property details');
         router.push('/dashboard/properties');
@@ -71,20 +102,44 @@ export default function PropertyDetails() {
     };
 
     fetchProperty();
-  }, [propertyId, router]);
+  }, [slug, router]);
 
-  const formatPrice = (price: number, symbol: string) => {
-    return `${symbol}${price.toLocaleString('en-NG', {
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    })}`;
+  const handleStatusChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newStatus = e.target.value;
+
+    if (!data || newStatus === data.property.status.toLowerCase()) return;
+
+    if (!confirm(`Change status from "${data.property.status}" to "${newStatus}"?`)) {
+      setSelectedStatus(data.property.status.toLowerCase());
+      return;
+    }
+
+    try {
+      setUpdatingStatus(true);
+      await api.patch(`/properties/${slug}/status`, { status: newStatus });
+
+      setData((prev) =>
+        prev
+          ? {
+              ...prev,
+              property: {
+                ...prev.property,
+                status: newStatus,
+              },
+            }
+          : null
+      );
+
+      toast.success(`Status updated to ${newStatus}`);
+    } catch (err: any) {
+      toast.error(err?.response?.data?.message || 'Failed to update status');
+      setSelectedStatus(data?.property.status.toLowerCase() || 'available');
+    } finally {
+      setUpdatingStatus(false);
+    }
   };
 
-  const formatMoney = (value: number) =>
-    new Intl.NumberFormat("en-NG", { minimumFractionDigits: 2 }).format(value);
-
-
-  if (loading || !property) {
+  if (loading || !data) {
     return (
       <div className="flex flex-col items-center justify-center h-screen">
         <FontAwesomeIcon icon={faSpinner} className="text-primary text-5xl animate-spin mb-4" />
@@ -92,6 +147,10 @@ export default function PropertyDetails() {
       </div>
     );
   }
+
+  const prop = data.property;
+  const priceNum = parseFloat(prop.price);
+  const displayStatus = prop.status.charAt(0).toUpperCase() + prop.status.slice(1).toLowerCase();
 
   return (
     <div className="container max-w-8xl mx-auto px-5 2xl:px-0 pt-8 md:pt-10 lg:pt-12 pb-12">
@@ -102,26 +161,37 @@ export default function PropertyDetails() {
           <p className="text-base font-semibold text-badge dark:text-white/90">Property Details</p>
         </div>
         <h1 className="text-4xl sm:text-5xl font-medium tracking-tighter text-black dark:text-white mb-3">
-          {property.propertyTitle}
+          {prop.propertyTitle}
         </h1>
         <p className="text-base text-black/60 dark:text-white/60">
-          {property.address}, {property.city}, {property.state}
+          {prop.address}, {prop.city}, {prop.state}
         </p>
+
+        <div className="flex gap-6 mt-4 text-sm text-gray-600 dark:text-gray-400">
+          <div className="flex items-center gap-2">
+            <FontAwesomeIcon icon={faEye} className="text-blue-500" />
+            <span>{data.viewsCount.toLocaleString()} views</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <FontAwesomeIcon icon={faHeart} className="text-red-500" />
+            <span>{data.favoritesCount.toLocaleString()} favorites</span>
+          </div>
+        </div>
       </div>
 
       {/* Main Content */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
         {/* Images Gallery */}
         <div className="space-y-4">
-          {property.images && property.images.length > 0 ? (
+          {prop.images?.length > 0 ? (
             <>
               <img
-                src={`${process.env.NEXT_PUBLIC_IMAGE_URL}${property.images[0].imageUrl}`}
-                alt={property.propertyTitle}
+                src={`${process.env.NEXT_PUBLIC_IMAGE_URL}${prop.images[0].imageUrl}`}
+                alt={prop.propertyTitle}
                 className="w-full h-96 object-cover rounded-2xl"
               />
               <div className="grid grid-cols-4 gap-4">
-                {property.images.slice(1).map((img) => (
+                {prop.images.slice(1).map((img) => (
                   <img
                     key={img.imageId}
                     src={`${process.env.NEXT_PUBLIC_IMAGE_URL}${img.imageUrl}`}
@@ -140,73 +210,110 @@ export default function PropertyDetails() {
 
         {/* Details */}
         <div className="space-y-8">
-          {/* Price and Type */}
+          {/* Price, Type, Status */}
           <div>
             <h2 className="text-3xl font-bold text-primary mb-2">
-              {property.currency.currencySymbol}{formatMoney(property.price)}
+              {prop.currency.currencySymbol}
+              {priceNum.toLocaleString('en-NG', {
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0,
+              })}
             </h2>
-            <div className="flex gap-4 text-sm">
-              <span className="px-3 py-1 bg-black/70 text-white rounded-full">
-                {property.listingType === 'sale' ? 'For Sale' : 'For Rent'}
+
+            <div className="flex flex-wrap gap-3 mt-3">
+              <span className="px-3 py-1 bg-black/70 text-white rounded-full text-sm">
+                {prop.listingType === 'sale' ? 'For Sale' : 'For Rent'}
               </span>
-              {property.status && (
-                <span className="px-3 py-1 bg-primary/90 text-white rounded-full">
-                  {property.status.charAt(0).toUpperCase() + property.status.slice(1)}
-                </span>
-              )}
-              <span className="px-3 py-1 bg-gray-200 dark:bg-gray-700 rounded-full">
-                {property?.property_type?.typeName}
+
+              <span
+                className={`px-3 py-1 text-white rounded-full text-sm ${
+                  prop.status === 'available'
+                    ? 'bg-green-600'
+                    : prop.status === 'sold' || prop.status === 'rented'
+                    ? 'bg-red-600'
+                    : 'bg-amber-600'
+                }`}
+              >
+                {displayStatus}
+              </span>
+
+              <span className="px-3 py-1 bg-gray-200 dark:bg-gray-700 rounded-full text-sm">
+                {prop.property_type?.typeName ?? 'Property'}
               </span>
             </div>
+
+            {data.isOwner && (
+              <div className="mt-6">
+                <label htmlFor="status" className="block text-sm font-medium mb-1.5">
+                  Update Property Status
+                </label>
+                <div className="flex items-center gap-3">
+                  <select
+                    id="status"
+                    value={selectedStatus}
+                    onChange={handleStatusChange}
+                    disabled={updatingStatus}
+                    className="px-4 py-2.5 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                  >
+                    <option value="available">Available</option>
+                    {prop.listingType === 'sale' && <option value="sold">Sold</option>}
+                    {prop.listingType === 'rent' && <option value="rented">Rented</option>}
+                  </select>
+
+                  {updatingStatus && (
+                    <FontAwesomeIcon icon={faSpinner} className="animate-spin text-primary" />
+                  )}
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Features */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             <div className="flex items-center gap-2">
               <FontAwesomeIcon icon={faBed} className="text-primary" />
-              <span>{property.bedrooms || 0} Bedrooms</span>
+              <span>{prop.bedrooms || 0} Beds</span>
             </div>
             <div className="flex items-center gap-2">
               <FontAwesomeIcon icon={faShower} className="text-primary" />
-              <span>{property.bathrooms || 0} Bathrooms</span>
+              <span>{prop.bathrooms || 0} Baths</span>
             </div>
             <div className="flex items-center gap-2">
               <FontAwesomeIcon icon={faCar} className="text-primary" />
-              <span>{property.garage || 'None'}</span>
+              <span>{prop.garage || 'None'}</span>
             </div>
             <div className="flex items-center gap-2">
               <FontAwesomeIcon icon={faMapMarkerAlt} className="text-primary" />
-              <span>{property.latitude && property.longitude ? `${property.latitude}, ${property.longitude}` : 'No coordinates'}</span>
+              <span>
+                {prop.latitude && prop.longitude ? 'Has coordinates' : 'No coordinates'}
+              </span>
             </div>
           </div>
 
-          {/* Description */}
           <div>
             <h3 className="text-xl font-semibold mb-3">Description</h3>
-            <p className="text-gray-600 dark:text-gray-300 whitespace-pre-wrap">
-              {property.propertyDescription}
+            <p className="text-gray-600 dark:text-gray-300 whitespace-pre-wrap leading-relaxed">
+              {prop.propertyDescription}
             </p>
           </div>
 
-          {/* Amenities */}
-          {property.amenities && (
+          {prop.amenities && (
             <div>
               <h3 className="text-xl font-semibold mb-3">Amenities</h3>
-              <ul className="list-disc pl-5 text-gray-600 dark:text-gray-300">
-                {property.amenities.split(',').map((item, idx) => (
-                  <li key={idx}>{item.trim()}</li>
+              <ul className="list-disc pl-5 text-gray-600 dark:text-gray-300 columns-2 sm:columns-3 gap-6">
+                {prop.amenities.split(',').map((item, i) => (
+                  <li key={i}>{item.trim()}</li>
                 ))}
               </ul>
             </div>
           )}
 
-          {/* Other Features */}
-          {property.otherFeatures && (
+          {prop.otherFeatures && (
             <div>
               <h3 className="text-xl font-semibold mb-3">Other Features</h3>
-              <ul className="list-disc pl-5 text-gray-600 dark:text-gray-300">
-                {property.otherFeatures.split(',').map((item, idx) => (
-                  <li key={idx}>{item.trim()}</li>
+              <ul className="list-disc pl-5 text-gray-600 dark:text-gray-300 columns-2 sm:columns-3 gap-6">
+                {prop.otherFeatures.split(',').map((item, i) => (
+                  <li key={i}>{item.trim()}</li>
                 ))}
               </ul>
             </div>
@@ -214,7 +321,6 @@ export default function PropertyDetails() {
         </div>
       </div>
 
-      {/* Back Button */}
       <div className="mt-12 text-center">
         <button
           onClick={() => router.back()}

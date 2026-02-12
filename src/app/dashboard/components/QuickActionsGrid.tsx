@@ -8,21 +8,21 @@ export default function QuickActionsGrid() {
 
       <QuickActionCard
         icon="ph:house-simple-fill"
-        title="Browse Properties"
+        title="Your Properties"
         description="Find your next dream home"
-        href="/properties"
+        href="/dashboard/properties"
       />
       <QuickActionCard
         icon="ph:plus-circle-fill"
         title="List Your Property"
         description="Sell or rent with ease"
-        href="/sell"
+        href="/dashboard/add-new-property"
       />
       <QuickActionCard
         icon="ph:chat-teardrop-text-fill"
         title="Messages & Inquiries"
         description="Check responses from agents"
-        href="/messages"
+        href="/dashboard/messages"
       />
 
     </div>

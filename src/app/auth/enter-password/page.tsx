@@ -17,7 +17,7 @@ const SigninPage = () => {
                                 fallback={
                                   <div className="flex items-center justify-center py-12">
                                     <p className="text-lg text-gray-600 dark:text-gray-400">
-                                      Loading properties...
+                                      Loading password page...
                                     </p>
                                   </div>
                                 }
