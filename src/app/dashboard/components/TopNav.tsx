@@ -1,11 +1,14 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';           // ← added
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Icon } from '@iconify/react';
 import { useTheme } from 'next-themes';
 import Link from 'next/link';
 import { getUserEmail, getUserName } from '@/app/lib/auth';
+import api from '@/app/lib/api';
+import toast from 'react-hot-toast';
+import { useUnreadStore } from '@/app/lib/stores/unreadStore';
 
 interface TopNavProps {
   title: string;
@@ -25,6 +28,8 @@ export default function TopNav({
   const { theme, setTheme } = useTheme();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
+  const { unreadCount, setUnreadCount } = useUnreadStore(); // ← correct usage
+
   const toggleDropdown = () => setIsDropdownOpen((prev) => !prev);
   const closeDropdown = () => setIsDropdownOpen(false);
 
@@ -36,33 +41,46 @@ export default function TopNav({
 
   const initials = `${firstNameFinal[0] || ''}${lastNameFinal[0] || ''}`.toUpperCase() || 'AU';
 
+  // Fetch unread count
+  const fetchUnreadCount = async () => {
+    try {
+      const res = await api.get('/messages/unread-count');
+      setUnreadCount(res.data?.unreadCount || 0); // ← FIXED: use setter
+    } catch (err) {
+      console.error('Failed to fetch unread count:', err);
+      setUnreadCount(0);
+    }
+  };
+
+  useEffect(() => {
+    fetchUnreadCount(); // initial fetch
+
+    const interval = setInterval(fetchUnreadCount, 30000); // poll every 30s
+    return () => clearInterval(interval);
+  }, []); // no dependencies needed here
+
   // ────────────────────────────────────────────────
-  //              LOGOUT LOGIC
+  // LOGOUT LOGIC
   // ────────────────────────────────────────────────
   const handleLogout = () => {
-    // 1. Clear localStorage (adjust keys to match what you actually store)
     localStorage.removeItem('token');
     localStorage.removeItem('user');
-    localStorage.removeItem('access_token');   // if you use different name
-    localStorage.removeItem('refresh_token');  // if you have one
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
 
-    // 2. Clear non-httpOnly cookies (most client-side set cookies)
-    //    This won't clear httpOnly cookies — those need server-side handling
     document.cookie.split(';').forEach((c) => {
       document.cookie = c
         .replace(/^ +/, '')
         .replace(/=.*/, '=;expires=' + new Date().toUTCString() + ';path=/');
     });
 
-    // 3. Optional: Call logout API endpoint (recommended if you have refresh tokens
-    //    or want the backend to invalidate the session)
-    fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/logout`, { method: 'POST', credentials: 'include' })
-      .catch(console.error);
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/logout`, {
+      method: 'POST',
+      credentials: 'include',
+    }).catch(console.error);
 
-    // 4. Close dropdown & redirect
     closeDropdown();
-    router.push('/auth/signin');           // or '/signin' — use your actual login path
-    // router.replace('/login');     // if you want to prevent back-button access
+    router.push('/auth/signin');
   };
 
   return (
@@ -97,6 +115,20 @@ export default function TopNav({
         >
           <Icon icon="ph:bell" width={24} height={24} />
         </button>
+
+        {/* Messages Icon with live unread count */}
+        <Link
+          href="/dashboard/messages"
+          className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition relative hover:cursor-pointer group"
+          aria-label={`Messages (${unreadCount} unread)`}
+        >
+          <Icon icon="ph:chat-dots" width={24} height={24} />
+          {unreadCount > 0 && (
+            <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center shadow-sm transition-all group-hover:scale-110">
+              {unreadCount > 99 ? '99+' : unreadCount}
+            </span>
+          )}
+        </Link>
 
         {/* User Avatar + Dropdown */}
         <div className="relative">

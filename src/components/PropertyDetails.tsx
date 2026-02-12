@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Icon } from "@iconify/react";
 import Link from "next/link";
 import Image from "next/image";
@@ -64,14 +64,18 @@ export default function PropertyDetails() {
   const [isFavorite, setIsFavorite] = useState(false);
   const [togglingFavorite, setTogglingFavorite] = useState(false);
 
-  // Login Modal
+  // Login Modal - Two steps
   const [showLoginModal, setShowLoginModal] = useState(false);
+  const [loginStep, setLoginStep] = useState<1 | 2>(1);
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
   const [loginLoading, setLoginLoading] = useState(false);
   const [loginError, setLoginError] = useState<string | null>(null);
 
-  // Pending favorite action (to retry after login)
+  const [pendingAction, setPendingAction] = useState<(() => Promise<void>) | null>(null);
+  const router = useRouter();
+
+  // Pending favorite action
   const [pendingFavoriteAction, setPendingFavoriteAction] = useState<(() => Promise<void>) | null>(null);
 
   useEffect(() => {
@@ -94,6 +98,9 @@ export default function PropertyDetails() {
         }
 
         setProperty(data);
+
+        // Check favorite status after property is loaded
+        await checkFavoriteStatus(data.propertyId);
       } catch (err: any) {
         console.error(err);
         setError(err.response?.data?.message || "Could not load property details.");
@@ -106,7 +113,23 @@ export default function PropertyDetails() {
   }, [slug]);
 
   // ────────────────────────────────────────────────
-  // Toggle favorite with 401 handling
+  // Check if property is already favorited
+  // ────────────────────────────────────────────────
+  const checkFavoriteStatus = async (propertyId: number) => {
+    try {
+      const res = await api.get(`/favorites/check/${propertyId}`);
+      setIsFavorite(res.data?.isFavorite || false);
+    } catch (err: any) {
+      // If 401 (not logged in) → just keep isFavorite = false
+      if (err.response?.status !== 401) {
+        console.warn("Could not check favorite status:", err);
+      }
+      setIsFavorite(false);
+    }
+  };
+
+  // ────────────────────────────────────────────────
+  // Toggle favorite with 401 → show login modal
   // ────────────────────────────────────────────────
   const toggleFavorite = async () => {
     if (!property?.propertyId) return;
@@ -123,12 +146,17 @@ export default function PropertyDetails() {
           await api.post("/favorites", { propertyId: property.propertyId });
           toast.success("Added to favorites");
           setIsFavorite(true);
+          setTimeout(() => {
+            window.location.reload();
+      // router.refresh(); // soft refresh
+    }, 3000);
         }
       } catch (err: any) {
         if (err.response?.status === 401) {
-          // Unauthorized → show login modal and queue the action
+          // Show login modal and queue the action
           setPendingFavoriteAction(() => action);
           setShowLoginModal(true);
+          setLoginStep(1);
         } else {
           toast.error(err.response?.data?.message || "Could not update favorites");
         }
@@ -140,11 +168,10 @@ export default function PropertyDetails() {
     await action();
   };
 
-  // ────────────────────────────────────────────────
-  // Handle login from modal
-  // ────────────────────────────────────────────────
-  // Your handleLogin (cleaned up)
-const handleLogin = async (e: React.FormEvent) => {
+
+
+
+  const handleLogin = async (e: React.FormEvent) => {
   e.preventDefault();
   setLoginLoading(true);
   setLoginError(null);
@@ -175,9 +202,14 @@ const handleLogin = async (e: React.FormEvent) => {
     setLoginEmail("");
     setLoginPassword("");
 
-    if (pendingFavoriteAction) {
-      await pendingFavoriteAction();
-      setPendingFavoriteAction(null);
+    // if (pendingFavoriteAction) {
+    //   await pendingFavoriteAction();
+    //   setPendingFavoriteAction(null);
+    // }
+
+    if (pendingAction) {
+      await pendingAction();
+      setPendingAction(null);
     }
 
     // Optional: redirect or refresh app state
@@ -190,32 +222,55 @@ const handleLogin = async (e: React.FormEvent) => {
 };
 
   // ────────────────────────────────────────────────
-  // Send message (your existing logic – unchanged)
+  // Send message 
   // ────────────────────────────────────────────────
-  const handleSendMessage = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!messageText.trim() || !property?.owner?.id) return;
+ const sendMessageAction = async () => {
+  try {
+    const res = await api.post("/messages", {
+      recipientId: property.owner.id,
+      propertyId: property.propertyId,
+      message: messageText.trim(),
+    });
+    toast.success(res.data?.message || "Message sent successfully!");
+    setMessageText("");
+    // router.refresh(); 
+    setTimeout(() => {
+      window.location.reload();
+      // router.refresh(); // soft refresh
+    }, 3000);
 
-    setSendingMessage(true);
+  } catch (err: any) {
+  
+    throw err;
+  }
+};
 
-    try {
-      const res = await api.post("/messages", {
-        recipientId: property.owner.id,
-        propertyId: property.propertyId,
-        message: messageText.trim(),
-      });
+// ────────────────────────────────────────────────
+// Updated message handler with 401 detection
+const handleSendMessage = async (e: React.FormEvent) => {
+  e.preventDefault();
+  if (!messageText.trim() || !property?.owner?.id) return;
+  if (sendingMessage) return;
+  setSendingMessage(true);
 
-      toast.success(res.data?.message || "Message sent successfully!");
-      setMessageText("");
-    } catch (err: any) {
+  try {
+    await sendMessageAction();
+  } catch (err: any) {
+    if (err.response?.status === 401) {
+      // Unauthorized → queue send action and show login modal
+      setPendingAction(() => sendMessageAction);
+      setShowLoginModal(true);
+      setLoginStep(1);
+    } else {
       toast.error(err.response?.data?.message || "Failed to send message");
-    } finally {
-      setSendingMessage(false);
     }
-  };
+  } finally {
+    setSendingMessage(false);
+  }
+};
 
   // ────────────────────────────────────────────────
-  // Render
+  // Render (everything else preserved)
   // ────────────────────────────────────────────────
   if (loading) {
     return (
@@ -259,11 +314,11 @@ const handleLogin = async (e: React.FormEvent) => {
   const priceFormatted = `${property.currency.currencySymbol}${Number(property.price).toLocaleString()}`;
 
   const amenitiesList = property.amenities
-    ? property.amenities.split(",").map(s => s.trim()).filter(Boolean)
+    ? property.amenities.split(",").map((s) => s.trim()).filter(Boolean)
     : [];
 
   const featuresList = property.otherFeatures
-    ? property.otherFeatures.split(",").map(s => s.trim()).filter(Boolean)
+    ? property.otherFeatures.split(",").map((s) => s.trim()).filter(Boolean)
     : [];
 
   return (
@@ -314,6 +369,11 @@ const handleLogin = async (e: React.FormEvent) => {
               />
               {isFavorite ? "Favorited" : "Add to Favorites"}
             </button>
+
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+            <Icon icon="solar:eye-linear" width={16} className="inline mr-1" />
+            {property.views} views
+          </p>
           </div>
 
           {/* Gallery */}
