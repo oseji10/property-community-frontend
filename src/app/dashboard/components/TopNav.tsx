@@ -39,7 +39,7 @@ export default function TopNav({
   const firstNameFinal = firstNamePart || firstName;
   const lastNameFinal = lastNamePart || lastName;
 
-  const initials = `${firstNameFinal[0] || ''}${lastNameFinal[0] || ''}`.toUpperCase() || 'AU';
+  const initials = `${firstNameFinal[0] || ''}${lastNameFinal[0] || ''}`.toUpperCase() || 'U';
 
   // Fetch unread count
   const fetchUnreadCount = async () => {
