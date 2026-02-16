@@ -32,6 +32,13 @@ const Footer = () => {
             <Link href="#">
               <Icon icon="ph:instagram-logo-bold" width={24} height={24} className="text-white hover:text-primary duration-300" />
             </Link>
+            <Link href="#">
+              <Icon icon="ph:linkedin-logo-bold" width={24} height={24} className="text-white hover:text-primary duration-300" />
+            </Link>
+
+            <Link href="#">
+              <Icon icon="ph:youtube-logo-bold" width={24} height={24} className="text-white hover:text-primary duration-300" />
+            </Link>
           </div>
         </div>
         <div className="py-16 border-b border-white/10">
@@ -69,19 +76,25 @@ const Footer = () => {
             </div>
           </div>
         </div>
-        <div className="flex justify-between md:flex-nowrap flex-wrap items-center py-6 gap-6">
-          <p className="text-white/40 text-sm ">
-            ©2026 Property Plus Africa
-          </p>
-          <div className="flex gap-8 items-center">
-            <Link href="#" className="text-white/40 hover:text-primary text-sm">
-              Terms of service
-            </Link>
-            <Link href="#" className="text-white/40 hover:text-primary text-sm">
-              Privacy policy
-            </Link>
-          </div>
-        </div>
+        <div className="py-8 text-center border-t border-white/5 mt-2">
+  <p className="text-white/50 text-sm mb-3">
+    © {new Date().getFullYear()} Property Plus Africa
+  </p>
+  <div className="flex justify-center gap-6 sm:gap-10">
+    <Link 
+      href="#" 
+      className="text-white/50 hover:text-primary text-sm transition-colors"
+    >
+      Terms of service
+    </Link>
+    <Link 
+      href="#" 
+      className="text-white/50 hover:text-primary text-sm transition-colors"
+    >
+      Privacy policy
+    </Link>
+  </div>
+</div>
       </div>
     </footer >
   );

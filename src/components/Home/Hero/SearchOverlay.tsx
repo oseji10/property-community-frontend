@@ -78,11 +78,20 @@ export default function SearchOverlay() {
         z-20
         mx-auto
         w-full
-        max-w-[1500px]
+        max-w-[1300px]
         px-4 sm:px-6 md:px-8 lg:px-10
       "
     >
-      <div className="bg-white/90 dark:bg-zinc-900/80 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/30 dark:border-zinc-700/40">
+      <div className="
+      bg-white/40 
+      dark:bg-zinc-950/50 
+      backdrop-blur-xl 
+      rounded-2xl 
+      shadow-2xl 
+      shadow-black/20 
+      border-white/25 
+      dark:border-zinc-700/40
+      ">
         <div className="p-5 sm:p-6 md:p-7 lg:p-8">
           {/* ---------- Toggle ---------- */}
           <div className="mb-6">

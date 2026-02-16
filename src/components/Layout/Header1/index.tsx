@@ -70,7 +70,7 @@ const Header1: React.FC = () => {
       >
         {/* Left: Contact info - hide on very small screens or compact */}
         <div className="hidden lg:flex items-center gap-3 md:gap-6 text-xs md:text-sm font-medium ">
-          <Link
+          {/* <Link
             href="mailto:info@propertyplusafrica.com"
             className={`flex items-center gap-1.5 ${textColor} ${hoverColor} text-white`}
           >
@@ -84,13 +84,13 @@ const Header1: React.FC = () => {
           >
             <Icon icon="ph:phone-bold" width={18} height={18} className="shrink-0" />
             +1-212-456-789
-          </Link>
+          </Link> */}
         </div>
 
         {/* Right side controls */}
         <div className="flex items-center gap-3 sm:gap-4 md:gap-6">
           {/* Social icons - show on md+, compact on sm */}
-          <div className="hidden sm:flex items-center gap-2 md:gap-4 font-bold">
+          {/* <div className="hidden sm:flex items-center gap-2 md:gap-4 font-bold">
             <a
               href="https://x.com/yourprofile"
               target="_blank"
@@ -133,10 +133,11 @@ const Header1: React.FC = () => {
             >
               <Icon icon="ri:youtube-fill" width={20} height={20} />
             </a>
-          </div>
+          </div> */}
 
           {/* Action buttons - compact on mobile */}
 <div className="flex items-center gap-2 sm:gap-3 md:gap-4 pointer-events-auto">
+         
             <Link
               href="/properties?type=buy"
               className={`
@@ -146,22 +147,12 @@ const Header1: React.FC = () => {
               `}
             >
               <FontAwesomeIcon icon={faArrowCircleRight} className="mr-1 w-3 h-3 sm:w-4 sm:h-4" />
-              <span className="hidden xs:inline">Buy</span>
-              <span className="xs:hidden">Buy</span>
+              <span className="hidden xs:inline">For Sale</span>
+              <span className="xs:hidden">For Sale</span>
             </Link>
 
-            <Link
-              href="/dashboard/add-new-property"
-              className={`
-                flex items-center px-3 py-1.5 sm:px-4 sm:py-2 text-white dark:text-white 
-                hover:bg-black/20 dark:hover:bg-white/10 duration-300 text-xs sm:text-sm md:text-base 
-                font-semibold rounded-full ${hoverColor} hover:cursor-pointer
-              `}
-            >
-              <FontAwesomeIcon icon={faArrowCircleRight} className="mr-1 w-3 h-3 sm:w-4 sm:h-4" />
-              <span className="hidden xs:inline">Sell</span>
-              <span className="xs:hidden">Sell</span>
-            </Link>
+         
+
 
             <Link
               href="/properties?type=rent"
@@ -172,8 +163,22 @@ const Header1: React.FC = () => {
               `}
             >
               <FontAwesomeIcon icon={faArrowCircleRight} className="mr-1 w-3 h-3 sm:w-4 sm:h-4" />
-              <span className="hidden xs:inline">Rent</span>
-              <span className="xs:hidden">Rent</span>
+              <span className="hidden xs:inline">For Rent</span>
+              <span className="xs:hidden">For Rent</span>
+            </Link>
+
+
+                  <Link
+              href="/dashboard/add-new-property"
+              className={`
+                flex items-center px-3 py-1.5 sm:px-4 sm:py-2 text-white dark:text-white 
+                hover:bg-black/20 dark:hover:bg-white/10 duration-300 text-xs sm:text-sm md:text-base 
+                font-semibold rounded-full ${hoverColor} hover:cursor-pointer
+              `}
+            >
+              <FontAwesomeIcon icon={faArrowCircleRight} className="mr-1 w-3 h-3 sm:w-4 sm:h-4" />
+              <span className="hidden xs:inline">For Lease</span>
+              <span className="xs:hidden">For Lease</span>
             </Link>
           </div>
 

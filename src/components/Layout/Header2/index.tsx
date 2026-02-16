@@ -120,7 +120,7 @@ useEffect(() => {
       {/* ================= NAV BAR ================= */}
       <nav
         className={`
-          container max-w-8xl mx-auto
+          container max-w-6xl mx-auto
           flex items-center justify-between
           py-3 md:py-4
           transition-all duration-300

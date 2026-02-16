@@ -18,20 +18,24 @@ export const navLinks: NavItem[] = [
   //   title: 'Workforce',
   //   path: '/workforce',
   // },
-  {
+    {
     title: 'Services',
-    path: '#',
-    submenu: [
-      { title: 'Property Management', path: '/property-management' },
-      { title: 'Legal Services', path: '/legal-services' },
-      { title: 'Title Documentation', path: '/title-documentation' },
-      { title: 'Consultation', path: '/consultation' },
-      { title: 'Contract Services', path: '/contract-services' },
-      { title: 'Property Development', path: '/property-development' },
-      { title: 'Engineering Services', path: '/engineering-services' },
-      { title: 'Architectural Services', path: '/architectural-services' },
-    ],
+    path: '/services',
   },
+  // {
+  //   title: 'Services',
+  //   path: '#',
+  //   submenu: [
+  //     { title: 'Property Management', path: '/property-management' },
+  //     { title: 'Legal Services', path: '/legal-services' },
+  //     { title: 'Title Documentation', path: '/title-documentation' },
+  //     { title: 'Consultation', path: '/consultation' },
+  //     { title: 'Contract Services', path: '/contract-services' },
+  //     { title: 'Property Development', path: '/property-development' },
+  //     { title: 'Engineering Services', path: '/engineering-services' },
+  //     { title: 'Architectural Services', path: '/architectural-services' },
+  //   ],
+  // },
   {
     title: 'Contact',
     path: '/contactus',
