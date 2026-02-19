@@ -159,7 +159,7 @@ const PropertiesListing: React.FC = () => {
                   <option value="">{typesLoading ? 'Loading…' : 'All types'}</option>
                   {propertyTypes.map((type) => (
                     <option key={type.id} value={type.id}>
-                      {type.name}
+                      {type.typeName}
                     </option>
                   ))}
                 </select>
@@ -214,7 +214,7 @@ const PropertiesListing: React.FC = () => {
               onClick={handleSearchClick}
               disabled={loading}
               className={`
-                mt-8 w-full py-3.5 rounded-xl font-semibold text-white transition
+                mt-8 w-full py-3.5 rounded-xl font-semibold text-white transition hover:cursor-pointer
                 ${loading 
                   ? 'bg-gray-400 cursor-not-allowed' 
                   : 'bg-[#D70040] hover:bg-[#b50036] active:bg-[#8f002c]'}
@@ -279,8 +279,8 @@ const PropertiesListing: React.FC = () => {
                   >
                     <option value="">{typesLoading ? 'Loading…' : 'All types'}</option>
                     {propertyTypes.map((type) => (
-                      <option key={type.id} value={type.id}>
-                        {type.name}
+                      <option key={type.typeId} value={type.typeId}>
+                        {type.typeName}
                       </option>
                     ))}
                   </select>

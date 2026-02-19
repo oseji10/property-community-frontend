@@ -2,6 +2,7 @@ import { PropertyHomes } from '@/types/properyHomes'
 import { Icon } from '@iconify/react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useState } from 'react'
 
 const PropertyCard: React.FC<{ item: PropertyHomes }> = ({ item }) => {
   const {
@@ -62,13 +63,15 @@ const PropertyCard: React.FC<{ item: PropertyHomes }> = ({ item }) => {
   //   COMMERCIAL: 'solar:shop-2-bold',
   //   // etc.
   // }
+const [imgError, setImgError] = useState(false);
 
   return (
     <div className="group relative rounded-2xl border border-dark/10 dark:border-white/10 hover:shadow-3xl duration-300 dark:hover:shadow-white/20 overflow-hidden">
       {/* Image + badges */}
       <div className="relative overflow-hidden rounded-t-2xl">
+        {/* {prop.images && prop.images.length > 0 ? ( */}
         <Link href={`/properties/detail?slug=${slug}`}>
-          {mainImage ? (
+          {mainImage && !imgError ? (
             <Image
               src={mainImage}
               alt={propertyTitle}
@@ -76,11 +79,13 @@ const PropertyCard: React.FC<{ item: PropertyHomes }> = ({ item }) => {
               height={300}
               className="w-full aspect-[4/3] object-cover group-hover:scale-110 group-hover:brightness-75 transition-all duration-500 hover:cursor-pointer"
               unoptimized={true}
+               onError={() => setImgError(true)}
             />
           ) : (
+            
             <div className="w-full aspect-[4/3] bg-gray-200 dark:bg-gray-800 flex items-center justify-center">
-              <span className="text-gray-400 text-sm">No image available</span>
-            </div>
+                      <Icon icon="ph:house-simple" className="text-gray-300 text-6xl" />
+                    </div>
           )}
         </Link>
 

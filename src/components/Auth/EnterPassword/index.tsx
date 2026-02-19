@@ -9,6 +9,7 @@ import Link from "next/link";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faSpinner } from "@fortawesome/free-solid-svg-icons";
 import { faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import { Icon } from "@iconify/react";
 
 export default function EnterPassword() {
   const router = useRouter();
@@ -123,6 +124,13 @@ export default function EnterPassword() {
   return (
     <>
     {/* // <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-black px-4"> */}
+      <Link
+        href="/"
+        className="inline-flex items-center gap-2 text-primary font-medium hover:underline hover:cursor-pointer"
+      >
+        <Icon icon="akar-icons:arrow-left" width={20} height={20} />
+        Back to Homepage
+      </Link>
       <div className="w-full max-w-md">
         <div className="mb-10 text-center">
           <Logo />

@@ -11,9 +11,9 @@ export default function Home() {
   return (
     <main>
       <Hero />
+      <FeaturedProperty />
       <Services />
       <Properties />
-      <FeaturedProperty />
       <Testimonial />
       <BlogSmall />
       <GetInTouch />

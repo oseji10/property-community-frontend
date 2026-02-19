@@ -4,8 +4,8 @@ import { createContext, useContext, useEffect, useState } from 'react'
 import api from '@/app/lib/api'
 
 type PropertyType = {
-  id: number
-  name: string
+  typeId: number
+  typeName: string
   slug?: string
 }
 
